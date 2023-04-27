@@ -18,5 +18,24 @@
         </Grid.ColumnDefinitions>
         <oxy:PlotView x:Name="plotView" Grid.Row="0" Grid.Column="1"/>
         <TextBlock x:Name="Accuracy" Text="Accuracy: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button x:Name="PlayButton" Grid.Row="1" Grid.Column="1" Click="PlayButton_Click" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <Ellipse x:Name="Circle" Fill="#5368A6"  Stroke="Black" StrokeThickness="5"/>
+                        <Path x:Name="PlaySymbol" Fill="LightSlateGray"  HorizontalAlignment="Left"
+                              Data="M 1 1 L 3 2 L 1 3 Z" Stretch="Fill" Width="29" Margin="41,28,0,28"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Circle" Property="Fill" Value="DarkGray"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Circle" Property="Fill" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
     </Grid>
 </Window>

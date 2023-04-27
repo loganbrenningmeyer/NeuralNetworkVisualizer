@@ -20,20 +20,11 @@ namespace NeuralNetworkVisualizer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private NeuralNetwork nn;
         public MainWindow()
         {
+
             InitializeComponent();
-
-            int[] numNeurons = new int[] { 2, 5, 3, 2, 1 };
-            string activation = "sigmoid";
-            NeuralNetwork nn = new NeuralNetwork(numNeurons, activation);
-
-            // Subscribe to plot update event
-            nn.PlotUpdated += (sender, e) => Nn_PlotUpdated(sender, e, nn);
-
-            nn.LoadCircleData();
-
-            TrainAsync(nn);
 
         }
 
@@ -47,7 +38,7 @@ namespace NeuralNetworkVisualizer
             });
         }
 
-        private async Task TrainAsync(NeuralNetwork nn)
+        private async Task TrainAsync()
         {
             await Task.Run(() => nn.Train());
 
@@ -60,5 +51,20 @@ namespace NeuralNetworkVisualizer
             });
         }
 
+        private async void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            plotView.DataContext = null;
+
+            int[] numNeurons = new int[] { 2, 5, 7, 3, 2, 1 };
+            string activation = "sigmoid";
+            nn = new NeuralNetwork(numNeurons, activation);
+
+            // Subscribe to plot update event
+            nn.PlotUpdated += (sender, e) => Nn_PlotUpdated(sender, e, nn);
+
+            nn.LoadCircleData();
+
+            await TrainAsync();
+        }
     }
 }

@@ -57,14 +57,14 @@ namespace NeuralNetworkVisualizer
             this.InitializeWeightsInputs();
         }
 
-        private OxyPalette CreateTransparentViridisPalette(int steps, byte alpha)
+        private OxyPalette CreateTransparentPalette(int steps, byte alpha)
         {
-            var viridisPalette = OxyPalettes.Plasma(steps);
+            var Palette = OxyPalettes.Plasma(steps);
             var colors = new OxyColor[steps];
 
             for (int i = 0; i < steps; i++)
             {
-                OxyColor originalColor = viridisPalette.Colors[i];
+                OxyColor originalColor = Palette.Colors[i];
                 colors[i] = OxyColor.FromArgb(alpha, originalColor.R, originalColor.G, originalColor.B);
             }
 
@@ -113,7 +113,7 @@ namespace NeuralNetworkVisualizer
             var colorAxis = new LinearColorAxis
             {
                 Position = AxisPosition.Right,
-                Palette = CreateTransparentViridisPalette(500, 128), // Change the second parameter to set the desired alpha value
+                Palette = CreateTransparentPalette(500, 128), // Change the second parameter to set the desired alpha value
                 Title = "Probability",
                 Key = "ColorAxisKey"
             };
@@ -186,8 +186,8 @@ namespace NeuralNetworkVisualizer
         public void LoadCircleData()
         {
             int numSamples = 1000;
-            double radiusInner = 2.0;
-            double radiusOuter = 4.0;
+            double radiusInner = 4;
+            double radiusOuter = 8;
 
             Random rng = new Random();
 
@@ -396,9 +396,9 @@ namespace NeuralNetworkVisualizer
         
         public void Train()
         {
-            int epochs = 1000;
+            int epochs = 0;
             // Train for a number of epochs
-            for (int epoch = 0; epoch < epochs; epoch++)
+            while (true)
             {
                 // Iterate through the first 75% of the data for training
                 for (int i = 0; i < (int)Math.Round(0.75 * this.data.Count); i++)
@@ -419,11 +419,15 @@ namespace NeuralNetworkVisualizer
                     this.UpdateWeights();
                 }
 
-                if (epoch % 5 == 0)
+                if (epochs % 5 == 0)
                 {
                     PlotUpdated?.Invoke(this, EventArgs.Empty);
                 }
                 
+                // Stop training if accuracy == 1
+                if (this.Test() > 0.99) { break; }
+
+                epochs++;
             }
         }
 
