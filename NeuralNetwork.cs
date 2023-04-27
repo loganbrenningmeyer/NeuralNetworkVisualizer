@@ -6,11 +6,38 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using MathNet.Numerics.Distributions;
+using OxyPlot;
+using OxyPlot.Series;
+using OxyPlot.Axes;
+using OxyPlot.Wpf;
 
 namespace NeuralNetworkVisualizer
 {
-    internal class NeuralNetwork
+    public static class ArrayBuilder
     {
+        public static double[] CreateVector(double start, double end, int numElements)
+        {
+            if (numElements <= 1)
+            {
+                throw new ArgumentException("The number of elements must be greater than 1.");
+            }
+
+            double[] vector = new double[numElements];
+            double step = (end - start) / (numElements - 1);
+
+            for (int i = 0; i < numElements; i++)
+            {
+                vector[i] = start + i * step;
+            }
+
+            return vector;
+        }
+    }
+
+    class NeuralNetwork
+    {
+        public event EventHandler PlotUpdated;
+
         private List<Layer> layers { get; set; }
         private List<List<double>> data { get; set; }
         private List<double> labels { get; set; }
@@ -28,6 +55,169 @@ namespace NeuralNetworkVisualizer
             this.layers.Add(new Layer(numNeurons[numNeurons.Length - 1], activation));
 
             this.InitializeWeightsInputs();
+        }
+
+        private OxyPalette CreateTransparentViridisPalette(int steps, byte alpha)
+        {
+            var viridisPalette = OxyPalettes.Plasma(steps);
+            var colors = new OxyColor[steps];
+
+            for (int i = 0; i < steps; i++)
+            {
+                OxyColor originalColor = viridisPalette.Colors[i];
+                colors[i] = OxyColor.FromArgb(alpha, originalColor.R, originalColor.G, originalColor.B);
+            }
+
+            return new OxyPalette(colors);
+        }
+
+
+        public PlotModel PlotData()
+        {
+            var plotModel = new PlotModel();
+
+            // Create scatter plot data series for each class
+            var class0 = new ScatterSeries { MarkerType = MarkerType.Circle, Title = "Class 0", MarkerSize = 2, MarkerFill = OxyColors.Blue };
+            var class1 = new ScatterSeries { MarkerType = MarkerType.Circle, Title = "Class 1", MarkerSize = 2, MarkerFill = OxyColors.Red };
+
+            // Separate the data points by class
+            for (int i = 0; i < data.Count; i++)
+            {
+                if (labels[i] == 0)
+                {
+                    class0.Points.Add(new ScatterPoint(data[i][0], data[i][1], double.NaN, 255));
+                }
+                else
+                {
+                    class1.Points.Add(new ScatterPoint(data[i][0], data[i][1], double.NaN, 255));
+                }
+            }
+
+            // Generate a grid of points
+            int gridSize = 100;
+            double[] x1Values = ArrayBuilder.CreateVector(-15, 15, gridSize);
+            double[] x2Values = ArrayBuilder.CreateVector(-15, 15, gridSize);
+
+            // Predict the class probabilities for each point in the grid
+            double[,] gridPredictions = new double[gridSize, gridSize];
+            for (int i = 0; i < gridSize; i++)
+            {
+                for (int j = 0; j < gridSize; j++)
+                {
+                    double[] input = new double[] { x1Values[i], x2Values[j] };
+                    double prediction = Predict(input);
+                    gridPredictions[i, j] = prediction;
+                }
+            }
+
+            var colorAxis = new LinearColorAxis
+            {
+                Position = AxisPosition.Right,
+                Palette = CreateTransparentViridisPalette(500, 128), // Change the second parameter to set the desired alpha value
+                Title = "Probability",
+                Key = "ColorAxisKey"
+            };
+
+            // Add heatmap
+            var heatmapSeries = new HeatMapSeries
+            {
+                X0 = -15,
+                X1 = 15,
+                Y0 = -15,
+                Y1 = 15,
+                Interpolate = false,
+                RenderMethod = HeatMapRenderMethod.Bitmap,
+                Data = gridPredictions,
+                ColorAxisKey = "ColorAxisKey"
+            };
+
+            plotModel.Series.Add(heatmapSeries);
+
+            plotModel.Series.Add(class0);
+            plotModel.Series.Add(class1);
+
+            plotModel.Axes.Add(new LinearColorAxis { Position = AxisPosition.Right, Palette = OxyPalettes.Jet(200) });
+            plotModel.Axes.Add(colorAxis);
+
+            // Add a legend
+            plotModel.IsLegendVisible = true;
+
+            // Set plot boundaries
+            var xAxis = new LinearAxis() { Position = AxisPosition.Bottom };
+            var yAxis = new LinearAxis() { Position = AxisPosition.Left };
+
+            yAxis.AbsoluteMinimum = -10;
+            yAxis.AbsoluteMaximum = 10;
+            xAxis.AbsoluteMinimum = -10;
+            xAxis.AbsoluteMaximum = 10;
+
+            yAxis.Minimum = -10;
+            yAxis.Maximum = 10;
+            xAxis.Minimum = -10;
+            xAxis.Maximum = 10;
+
+            // Disable zooming
+            xAxis.IsZoomEnabled = false;
+            yAxis.IsZoomEnabled = false;
+
+            plotModel.Axes.Add(yAxis);
+            plotModel.Axes.Add(xAxis);
+
+            return plotModel;
+        }
+
+
+
+        public double Predict(double[] input)
+        {
+            // Set input values
+            for (int i = 0; i < layers[0].Neurons.Count; i++)
+            {
+                layers[0].Neurons[i].Output = input[i];
+            }
+
+            // Forward pass
+            Forward();
+
+            // Return the output of the last neuron
+            return layers[layers.Count - 1].Neurons[0].Output;
+        }
+
+        public void LoadCircleData()
+        {
+            int numSamples = 1000;
+            double radiusInner = 2.0;
+            double radiusOuter = 4.0;
+
+            Random rng = new Random();
+
+            for (int i = 0; i < numSamples; i++)
+            {
+                // Randomly choose a class (inner circle or outer ring)
+                int target = rng.Next(0, 2);
+
+                // Generate a random angle
+                double angle = 2 * Math.PI * rng.NextDouble();
+
+                // Choose a random distance from the center based on the class
+                double distance;
+                if (target == 0)  // Inner circle
+                {
+                    distance = radiusInner * Math.Sqrt(rng.NextDouble());
+                }
+                else  // Outer ring
+                {
+                    distance = radiusOuter + 1.5 * rng.NextDouble();
+                }
+
+                // Calculate x and y coordinates based on the angle and distance
+                double x1 = distance * Math.Cos(angle);
+                double x2 = distance * Math.Sin(angle);
+
+                // Add the data point to the input and target lists
+                data.Add(new List<double> { x1, x2 });
+                labels.Add(target);
+            }
         }
 
         public void LoadXORData()
@@ -53,7 +243,7 @@ namespace NeuralNetworkVisualizer
             {
                 for (int j = 0; j < numFeatures; j++)
                 {
-                    X[i, j] = Math.Sign(X[i, j]) * 2 - 1 + 0.1 * Normal.Sample(rng, 0, 1);
+                    X[i, j] = Math.Sign(X[i, j]) * 2 - 1 + Normal.Sample(rng, 0, 1);
                 }
             }
 
@@ -100,10 +290,10 @@ namespace NeuralNetworkVisualizer
                     // Generate random weights for each neuron in the previous layer
                     foreach (Neuron _ in this.layers[currLayer - 1].Neurons)
                     {
-                        currNeuron.Weights.Add(new Random().NextDouble());
+                        currNeuron.Weights.Add(2 * new Random().NextDouble() - 1);
                     }
                     // Generate random bias
-                    currNeuron.Bias = new Random().NextDouble();
+                    currNeuron.Bias = 2 * new Random().NextDouble() - 1;
                     // Set inputs to the outputs of the previous layer
                     currNeuron.Inputs = this.layers[currLayer - 1].Neurons.Select(neuron => neuron.Output).ToList();
                 }
@@ -177,7 +367,7 @@ namespace NeuralNetworkVisualizer
         public void UpdateWeights()
         {
             // Learning rate
-            double alpha = 0.05;
+            double alpha = 0.1;
             // Iterate through each layer excluding the input layer
             for (int currLayer = 1; currLayer < this.layers.Count; currLayer++)
             {
@@ -228,6 +418,12 @@ namespace NeuralNetworkVisualizer
                     // Update weights
                     this.UpdateWeights();
                 }
+
+                if (epoch % 5 == 0)
+                {
+                    PlotUpdated?.Invoke(this, EventArgs.Empty);
+                }
+                
             }
         }
 
