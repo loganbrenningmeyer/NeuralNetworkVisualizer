@@ -38,6 +38,7 @@ namespace NeuralNetworkVisualizer
     {
         public event EventHandler PlotUpdated;
 
+        public bool StopTraining { get; set; } = false;
         private List<Layer> layers { get; set; }
         private List<List<double>> data { get; set; }
         private List<double> labels { get; set; }
@@ -183,9 +184,74 @@ namespace NeuralNetworkVisualizer
             return layers[layers.Count - 1].Neurons[0].Output;
         }
 
-        public void LoadCircleData()
+        public void LoadMoonData(int numSamples=1000, double noise = 0.1)
         {
-            int numSamples = 1000;
+            Random rng = new Random();
+
+            for (int i = 0; i < numSamples; i++)
+            {
+                // Randomly choose a class (upper moon or lower moon)
+                int target = rng.Next(0, 2);
+
+                // Generate a random angle
+                double angle = Math.PI * rng.NextDouble();
+
+                // Calculate x and y coordinates based on the angle and class
+                double x1, x2;
+
+                if (target == 0)  // Upper moon
+                {
+                    x1 = Math.Cos(angle);
+                    x2 = Math.Sin(angle);
+                }
+                else  // Lower moon
+                {
+                    x1 = 1.0 + Math.Cos(angle);
+                    x2 = -Math.Sin(angle) + 0.75;
+                }
+
+                // Add noise to the data
+                x1 += rng.NextDouble() * noise - noise / 2;
+                x2 += rng.NextDouble() * noise - noise / 2;
+
+                // Enlarge and center the data
+                x1 *= 5;
+                x1 -= 2.5;
+                x2 *= 5;
+                x2 -= 1;
+
+                // Add the data point to the input and target lists
+                data.Add(new List<double> { x1, x2 });
+                labels.Add(target);
+            }
+        }
+
+        public void LoadSpiralData(int numSamples = 1000, double noise = 0.1)
+        {
+            data.Clear();
+            labels.Clear();
+
+            Random rng = new Random();
+
+            for (int i = 0; i < numSamples / 2; i++)
+            {
+                for (int spiralClass = 0; spiralClass < 2; spiralClass++)
+                {
+                    double r = (double)i / (numSamples / 2) * 2;
+                    double t = 1.75 * r * Math.PI + (2 * Math.PI * spiralClass);
+                    if (spiralClass == 1) { t += Math.PI; }
+                    double x1 = r * Math.Cos(t) + noise * rng.NextDouble() * 2 - 1;
+                    double x2 = r * Math.Sin(t) + noise * rng.NextDouble() * 2 - 1;
+
+                    data.Add(new List<double> { x1 * 4 + 3.5, x2 * 4 + 4 });
+                    labels.Add(spiralClass);
+                }
+            }
+        }
+
+
+        public void LoadCircleData(int numSamples = 1000)
+        {
             double radiusInner = 4;
             double radiusOuter = 8;
 
@@ -220,17 +286,17 @@ namespace NeuralNetworkVisualizer
             }
         }
 
-        public void LoadXORData()
+        public void LoadXORData(int numSamples = 1000)
         {
-            int dataSize = 1000;
+
             int numFeatures = 2;
 
             // Initialize a random number generator
             Random rng = new Random(0);
 
             // Generate random data
-            double[,] X = new double[dataSize, numFeatures];
-            for (int i = 0; i < dataSize; i++)
+            double[,] X = new double[numSamples, numFeatures];
+            for (int i = 0; i < numSamples; i++)
             {
                 for (int j = 0; j < numFeatures; j++)
                 {
@@ -239,7 +305,7 @@ namespace NeuralNetworkVisualizer
             }
 
             // Move positive/negative data to 1 or -1 and add some noise
-            for (int i = 0; i < dataSize; i++)
+            for (int i = 0; i < numSamples; i++)
             {
                 for (int j = 0; j < numFeatures; j++)
                 {
@@ -248,14 +314,14 @@ namespace NeuralNetworkVisualizer
             }
 
             // Compare X0 and X1 sign to determine XOR
-            double[] y = new double[dataSize];
-            for (int i = 0; i < dataSize; i++)
+            double[] y = new double[numSamples];
+            for (int i = 0; i < numSamples; i++)
             {
                 y[i] = (X[i, 0] > 0) ^ (X[i, 1] > 0) ? 1 : 0;
             }
 
             // Multiply X by 3
-            for (int i = 0; i < dataSize; i++)
+            for (int i = 0; i < numSamples; i++)
             {
                 for (int j = 0; j < numFeatures; j++)
                 {
@@ -264,7 +330,7 @@ namespace NeuralNetworkVisualizer
             }
 
             // Convert 2D array X to List<List<double>>
-            for (int i = 0; i < dataSize; i++)
+            for (int i = 0; i < numSamples; i++)
             {
                 List<double> row = new List<double>();
                 for (int j = 0; j < numFeatures; j++)
@@ -367,7 +433,7 @@ namespace NeuralNetworkVisualizer
         public void UpdateWeights()
         {
             // Learning rate
-            double alpha = 0.1;
+            double alpha = 0.05;
             // Iterate through each layer excluding the input layer
             for (int currLayer = 1; currLayer < this.layers.Count; currLayer++)
             {
@@ -398,7 +464,7 @@ namespace NeuralNetworkVisualizer
         {
             int epochs = 0;
             // Train for a number of epochs
-            while (true)
+            while (!StopTraining)
             {
                 // Iterate through the first 75% of the data for training
                 for (int i = 0; i < (int)Math.Round(0.75 * this.data.Count); i++)
@@ -425,7 +491,7 @@ namespace NeuralNetworkVisualizer
                 }
                 
                 // Stop training if accuracy == 1
-                if (this.Test() > 0.99) { break; }
+                //if (this.Test() > 0.99) { break; }
 
                 epochs++;
             }

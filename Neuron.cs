@@ -39,6 +39,8 @@ namespace NeuralNetworkVisualizer
             {
                 this.Z += this.inputs[i] * this.weights[i];
             }
+
+            this.Z += this.bias;
         }
 
         public double ActivationFunction()
@@ -53,8 +55,17 @@ namespace NeuralNetworkVisualizer
 
         public double Sigmoid()
         {
-            return 1.0 / (1.0 + Math.Exp(-this.Z));
+            if (this.Z >= 0)
+            {
+                return 1.0 / (1.0 + Math.Exp(-this.Z));
+            }
+            else
+            {
+                double expZ = Math.Exp(this.Z);
+                return expZ / (1.0 + expZ);
+            }
         }
+
 
         public double SigmoidDerivative()
         {

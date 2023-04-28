@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxyPlot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,16 +54,44 @@ namespace NeuralNetworkVisualizer
 
         private async void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            plotView.DataContext = null;
+            // Stop the previous training, if any
+            if (nn != null)
+            {
+                nn.StopTraining = true;
+            }
 
-            int[] numNeurons = new int[] { 2, 5, 7, 3, 2, 1 };
+            plotView.Model = new PlotModel();
+            plotView.InvalidatePlot(true);
+
+            int[] numNeurons = new int[] { 2, 8, 6, 5, 3, 1 };
             string activation = "sigmoid";
             nn = new NeuralNetwork(numNeurons, activation);
 
             // Subscribe to plot update event
             nn.PlotUpdated += (sender, e) => Nn_PlotUpdated(sender, e, nn);
 
-            nn.LoadCircleData();
+            Random random = new Random();
+            int data = random.Next(0, 4);
+
+            if (data == 0) 
+            {
+                nn.LoadMoonData(noise: 0.4);
+            }
+            else if (data == 1)
+            {
+                nn.LoadXORData();
+            }
+            else if (data == 2)
+            {
+                nn.LoadCircleData();
+            }
+            else
+            {
+                nn.LoadSpiralData();
+            }
+            
+
+            nn.StopTraining = false;
 
             await TrainAsync();
         }
