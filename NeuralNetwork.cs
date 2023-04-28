@@ -10,6 +10,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
 using OxyPlot.Wpf;
+using OxyPlot.Legends;
 
 namespace NeuralNetworkVisualizer
 {
@@ -37,6 +38,8 @@ namespace NeuralNetworkVisualizer
     class NeuralNetwork
     {
         public event EventHandler PlotUpdated;
+        public List<double> AccuracyHistory { get; private set; } = new List<double>();
+        public List<double> LossHistory { get; private set; } = new List<double>();
 
         public bool StopTraining { get; set; } = false;
         private List<Layer> layers { get; set; }
@@ -72,6 +75,64 @@ namespace NeuralNetworkVisualizer
             return new OxyPalette(colors);
         }
 
+        public OxyPlot.PlotModel LossAccuracyPlotData()
+        {
+            var plotModel = new OxyPlot.PlotModel { Title = "Accuracy over Epochs" };
+
+            var accuracyLineSeries = new OxyPlot.Series.LineSeries
+            {
+                LineStyle = OxyPlot.LineStyle.Solid,
+                StrokeThickness = 1,
+                Title = "Accuracy"
+            };
+
+            for (int i = 0; i < AccuracyHistory.Count; i++)
+            {
+                accuracyLineSeries.Points.Add(new OxyPlot.DataPoint(i, AccuracyHistory[i]));
+            }
+
+            plotModel.Series.Add(accuracyLineSeries);
+
+            var lossLineSeries = new OxyPlot.Series.LineSeries
+            {
+                LineStyle = OxyPlot.LineStyle.Solid,
+                StrokeThickness = 1,
+                Title = "Loss"
+            };
+
+            for (int i = 0; i < LossHistory.Count; i++)
+            {
+                lossLineSeries.Points.Add(new OxyPlot.DataPoint(i, LossHistory[i]));
+            }
+
+            plotModel.Series.Add(lossLineSeries);
+
+            plotModel.Legends.Add(new Legend()
+            {
+                LegendTitle = "Legend",
+                LegendPosition = LegendPosition.RightBottom,
+            });
+
+            plotModel.IsLegendVisible = true;
+
+            // Add and configure y-axis
+            var yAxis = new OxyPlot.Axes.LinearAxis
+            {
+                Position = OxyPlot.Axes.AxisPosition.Left,
+                Minimum = 0,
+                Maximum = 1
+            };
+            plotModel.Axes.Add(yAxis);
+
+            // Add x-axis
+            var xAxis = new OxyPlot.Axes.LinearAxis
+            {
+                Position = OxyPlot.Axes.AxisPosition.Bottom
+            };
+            plotModel.Axes.Add(xAxis);
+
+            return plotModel;
+        }
 
         public PlotModel PlotData()
         {
@@ -343,6 +404,7 @@ namespace NeuralNetworkVisualizer
             // Store y in labels
             labels.AddRange(y);
         }
+        
 
 
         private void InitializeWeightsInputs()
@@ -466,6 +528,7 @@ namespace NeuralNetworkVisualizer
             // Train for a number of epochs
             while (!StopTraining)
             {
+                double epochLoss = 0;
                 // Iterate through the first 75% of the data for training
                 for (int i = 0; i < (int)Math.Round(0.75 * this.data.Count); i++)
                 {
@@ -479,17 +542,28 @@ namespace NeuralNetworkVisualizer
                     this.Forward();
                     // Calculate error (target - output)
                     double error = this.labels[i] - this.layers[this.layers.Count - 1].Neurons[0].Output;
+                    epochLoss += Math.Pow(error, 2);
                     // Backpropagation
                     this.Backprop(error);
                     // Update weights
                     this.UpdateWeights();
                 }
 
+                epochLoss /= (int)Math.Round(0.75 * this.data.Count);
+                LossHistory.Add(epochLoss);
+
+                double accuracy = this.Test();
+                AccuracyHistory.Add(accuracy);
+
+                PlotUpdated?.Invoke(this, EventArgs.Empty);
+
+                /*
                 if (epochs % 5 == 0)
                 {
                     PlotUpdated?.Invoke(this, EventArgs.Empty);
                 }
-                
+                */
+
                 // Stop training if accuracy == 1
                 //if (this.Test() > 0.99) { break; }
 

@@ -17,6 +17,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <oxy:PlotView x:Name="plotView" Grid.Row="0" Grid.Column="1"/>
+        <oxy:PlotView x:Name="accuracyPlotView" Grid.Row="1" Grid.Column="0" Margin="5" />
         <TextBlock x:Name="Accuracy" Text="Accuracy: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Button x:Name="PlayButton" Grid.Row="1" Grid.Column="1" Click="PlayButton_Click" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
             <Button.Template>

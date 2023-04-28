@@ -36,6 +36,9 @@ namespace NeuralNetworkVisualizer
             {
                 plotView.Model = nn.PlotData();
                 plotView.InvalidatePlot(true);
+
+                accuracyPlotView.Model = nn.LossAccuracyPlotData();
+                accuracyPlotView.InvalidatePlot(true);
             });
         }
 
@@ -63,7 +66,10 @@ namespace NeuralNetworkVisualizer
             plotView.Model = new PlotModel();
             plotView.InvalidatePlot(true);
 
-            int[] numNeurons = new int[] { 2, 8, 6, 5, 3, 1 };
+            accuracyPlotView.Model = new PlotModel();
+            accuracyPlotView.InvalidatePlot(true);
+
+            int[] numNeurons = new int[] { 2, 5, 3, 2, 1 };
             string activation = "sigmoid";
             nn = new NeuralNetwork(numNeurons, activation);
 
