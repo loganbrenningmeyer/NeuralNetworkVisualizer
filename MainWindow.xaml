@@ -6,7 +6,10 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:NeuralNetworkVisualizer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1600">
+        Title="MainWindow" Height="600" Width="1050"
+        SizeChanged="MainWindow_SizeChanged"
+        Loaded="MainWindow_Loaded"
+        Background="#242831">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1.5*"/>
@@ -16,23 +19,73 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <oxy:PlotView x:Name="plotView" Grid.Row="0" Grid.Column="1"/>
-        <oxy:PlotView x:Name="accuracyPlotView" Grid.Row="1" Grid.Column="0" Margin="5" />
-        <TextBlock x:Name="Accuracy" Text="Accuracy: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+        <!-- Vertical Line -->
+        <Rectangle Width="3"
+           Fill="#2f333c"
+           Grid.Row="0"
+           Grid.RowSpan="2"
+           Grid.Column="1"
+           HorizontalAlignment="Left"
+           VerticalAlignment="Stretch"
+           Panel.ZIndex="2"/>
+
+        <!-- Horizontal Line -->
+        <Rectangle Height="3"
+           Fill="#2f333c"
+           Grid.Row="1"
+           Grid.Column="0"
+           Grid.ColumnSpan="2"
+           HorizontalAlignment="Stretch"
+           VerticalAlignment="Top" />
+
+        <ItemsControl x:Name="CirclesContainer" Grid.Row="0" Grid.Column="0" Margin="25" Panel.ZIndex="1">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ItemsControl ItemsSource="{Binding Neurons}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Ellipse Fill="#fcd47d" Width="{Binding CircleSize}" Height="{Binding CircleSize}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <Canvas x:Name="NetworkCanvas" Grid.Row="0" Grid.Column="0" Background="Transparent" Panel.ZIndex="0"/>
+
+        <oxy:PlotView x:Name="plotView" Grid.Row="0" Grid.Column="1" Background="#242831"/>
+        <oxy:PlotView x:Name="accuracyPlotView" Grid.Row="1" Grid.Column="0" Margin="5" Background="#242831" />
+        
+        <TextBlock x:Name="Accuracy" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        
         <Button x:Name="PlayButton" Grid.Row="1" Grid.Column="1" Click="PlayButton_Click" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
             <Button.Template>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid>
-                        <Ellipse x:Name="Circle" Fill="#5368A6"  Stroke="Black" StrokeThickness="5"/>
-                        <Path x:Name="PlaySymbol" Fill="LightSlateGray"  HorizontalAlignment="Left"
+                        <Ellipse x:Name="Circle" Fill="#181715"  Stroke="#f9d47c" StrokeThickness="5"/>
+                        <Path x:Name="PlaySymbol" Fill="#f9d47c"  HorizontalAlignment="Left"
                               Data="M 1 1 L 3 2 L 1 3 Z" Stretch="Fill" Width="29" Margin="41,28,0,28"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Circle" Property="Fill" Value="DarkGray"/>
+                            <Setter TargetName="Circle" Property="Fill" Value="#2b2924"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Circle" Property="Fill" Value="Gray"/>
+                            <Setter TargetName="Circle" Property="Fill" Value="#353129"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

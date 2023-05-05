@@ -555,14 +555,15 @@ namespace NeuralNetworkVisualizer
                 double accuracy = this.Test();
                 AccuracyHistory.Add(accuracy);
 
-                PlotUpdated?.Invoke(this, EventArgs.Empty);
 
-                /*
+                //PlotUpdated?.Invoke(this, EventArgs.Empty);
+
+                
                 if (epochs % 5 == 0)
                 {
                     PlotUpdated?.Invoke(this, EventArgs.Empty);
                 }
-                */
+                
 
                 // Stop training if accuracy == 1
                 //if (this.Test() > 0.99) { break; }
