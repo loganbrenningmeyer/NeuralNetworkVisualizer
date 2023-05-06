@@ -6,7 +6,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:NeuralNetworkVisualizer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1050"
+        Title="Neural Network Visualizer" Height="600" Width="1050"
         SizeChanged="MainWindow_SizeChanged"
         Loaded="MainWindow_Loaded"
         Background="#242831">
@@ -39,36 +39,41 @@
            HorizontalAlignment="Stretch"
            VerticalAlignment="Top" />
 
-        <ItemsControl x:Name="CirclesContainer" Grid.Row="0" Grid.Column="0" Margin="25" Panel.ZIndex="1">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ItemsControl ItemsSource="{Binding Neurons}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Ellipse Fill="#fcd47d" Width="{Binding CircleSize}" Height="{Binding CircleSize}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <Border Grid.Row="0" Grid.Column="0" BorderBrush="#4f8d8a" BorderThickness="1" Margin="25" Panel.ZIndex="1" CornerRadius="20">
+            <Grid>
+                <ItemsControl x:Name="CirclesContainer" Grid.Row="0" Grid.Column="0" Margin="25" Panel.ZIndex="1">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Neurons}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Ellipse Fill="#fcd47d" Width="{Binding CircleSize}" Height="{Binding CircleSize}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Content}" Foreground="Black" FontWeight="Bold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
 
-        <Canvas x:Name="NetworkCanvas" Grid.Row="0" Grid.Column="0" Background="Transparent" Panel.ZIndex="0"/>
+                <Canvas x:Name="NetworkCanvas" Grid.Row="0" Grid.Column="0" Background="Transparent" Panel.ZIndex="0"/>
+            </Grid>
+        </Border>
 
         <oxy:PlotView x:Name="plotView" Grid.Row="0" Grid.Column="1" Background="#242831"/>
-        <oxy:PlotView x:Name="accuracyPlotView" Grid.Row="1" Grid.Column="0" Margin="5" Background="#242831" />
+        <oxy:PlotView x:Name="accuracyPlotView" Grid.Row="1" Grid.Column="0" Margin="5" Background="#242831"/>
         
         <TextBlock x:Name="Accuracy" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         

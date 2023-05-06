@@ -40,13 +40,24 @@ namespace NeuralNetworkVisualizer
 
             var layers = new List<object>();
 
+            bool first = true;
+
             foreach (var neuronCount in neuronCounts)
             {
                 var layer = new List<object>();
 
-                for (int i = 0; i < neuronCount; i++)
+                if (first == true)
                 {
-                    layer.Add(new { CircleSize = circleSize });
+                    layer.Add(new { CircleSize = circleSize, Content = "X1" });
+                    layer.Add(new { CircleSize = circleSize, Content = "X2" });
+                    first = false;
+                }
+                else
+                {
+                    for (int i = 0; i < neuronCount; i++)
+                    {
+                        layer.Add(new { CircleSize = circleSize });
+                    }
                 }
 
                 layers.Add(new { RowCount = neuronCount, ColumnCount = 1, Neurons = layer });
@@ -75,8 +86,8 @@ namespace NeuralNetworkVisualizer
                         {
                             Stroke = brush,
                             StrokeThickness = 1,
-                            X1 = (double)90 + (layerIndex) * (CirclesContainer.ActualWidth - 120) / (numNeurons.Length - 1),
-                            X2 = (double)90 + (layerIndex + 1) * (CirclesContainer.ActualWidth - 120) / (numNeurons.Length - 1),
+                            X1 = (double)85 + (layerIndex) * (CirclesContainer.ActualWidth - 110) / (numNeurons.Length - 1),
+                            X2 = (double)85 + (layerIndex + 1) * (CirclesContainer.ActualWidth - 110) / (numNeurons.Length - 1),
                             Y1 = (double)(currentNeuronIndex + 1) * (CirclesContainer.ActualHeight + 50) / (currentLayerNeuronCount + 1),
                             Y2 = (double)(nextNeuronIndex + 1) * (CirclesContainer.ActualHeight + 50) / (nextLayerNeuronCount + 1)
                         };
@@ -119,6 +130,7 @@ namespace NeuralNetworkVisualizer
                 plotView.Model = nn.PlotData();
             });
         }
+
 
         private async void PlayButton_Click(object sender, RoutedEventArgs e)
         {

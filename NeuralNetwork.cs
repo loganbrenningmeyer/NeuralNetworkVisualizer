@@ -63,26 +63,25 @@ namespace NeuralNetworkVisualizer
 
         private OxyPalette CreateTransparentPalette(int steps, byte alpha)
         {
-            var Palette = OxyPalettes.Plasma(steps);
-            var colors = new OxyColor[steps];
+            var numberOfColors = 256; // Number of colors in the palette
 
-            for (int i = 0; i < steps; i++)
-            {
-                OxyColor originalColor = Palette.Colors[i];
-                colors[i] = OxyColor.FromArgb(alpha, originalColor.R, originalColor.G, originalColor.B);
-            }
+            // Define the start and end colors of the palette
+            var startColor = OxyColor.FromArgb(150, 241, 161, 97); // Yellowish-orange color
+            var endColor = OxyColor.FromArgb(150, 178, 72, 74); // Reddish-pink color
 
-            return new OxyPalette(colors);
+            var customPalette = OxyPalette.Interpolate(numberOfColors, startColor, endColor);
+            return customPalette;
         }
 
         public OxyPlot.PlotModel LossAccuracyPlotData()
         {
-            var plotModel = new OxyPlot.PlotModel { Title = "Accuracy over Epochs" };
+            var plotModel = new OxyPlot.PlotModel { PlotAreaBackground = OxyColor.FromArgb(255, 51, 52, 57)};
 
             var accuracyLineSeries = new OxyPlot.Series.LineSeries
             {
                 LineStyle = OxyPlot.LineStyle.Solid,
-                StrokeThickness = 1,
+                Color = OxyColor.FromArgb(255, 103, 199, 188),
+                StrokeThickness = 3,
                 Title = "Accuracy"
             };
 
@@ -96,7 +95,8 @@ namespace NeuralNetworkVisualizer
             var lossLineSeries = new OxyPlot.Series.LineSeries
             {
                 LineStyle = OxyPlot.LineStyle.Solid,
-                StrokeThickness = 1,
+                Color = OxyColor.FromArgb(255, 120, 68, 81),
+                StrokeThickness = 3,
                 Title = "Loss"
             };
 
@@ -109,8 +109,7 @@ namespace NeuralNetworkVisualizer
 
             plotModel.Legends.Add(new Legend()
             {
-                LegendTitle = "Legend",
-                LegendPosition = LegendPosition.RightBottom,
+                LegendPosition = LegendPosition.RightBottom
             });
 
             plotModel.IsLegendVisible = true;
@@ -119,15 +118,28 @@ namespace NeuralNetworkVisualizer
             var yAxis = new OxyPlot.Axes.LinearAxis
             {
                 Position = OxyPlot.Axes.AxisPosition.Left,
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Dot,
+                MajorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
+                MinorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
+                MajorGridlineThickness = 1,
+                MinorGridlineThickness = 1,
                 Minimum = 0,
                 Maximum = 1
+                
             };
             plotModel.Axes.Add(yAxis);
 
             // Add x-axis
             var xAxis = new OxyPlot.Axes.LinearAxis
             {
-                Position = OxyPlot.Axes.AxisPosition.Bottom
+                Position = OxyPlot.Axes.AxisPosition.Bottom,
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Dot,
+                MajorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
+                MinorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
+                MajorGridlineThickness = 1,
+                MinorGridlineThickness = 1
             };
             plotModel.Axes.Add(xAxis);
 
@@ -136,11 +148,11 @@ namespace NeuralNetworkVisualizer
 
         public PlotModel PlotData()
         {
-            var plotModel = new PlotModel();
+            var plotModel = new PlotModel { PlotAreaBackground = OxyColor.FromArgb(255, 51, 52, 57) };
 
             // Create scatter plot data series for each class
-            var class0 = new ScatterSeries { MarkerType = MarkerType.Circle, Title = "Class 0", MarkerSize = 2, MarkerFill = OxyColors.Blue };
-            var class1 = new ScatterSeries { MarkerType = MarkerType.Circle, Title = "Class 1", MarkerSize = 2, MarkerFill = OxyColors.Red };
+            var class0 = new ScatterSeries { MarkerType = MarkerType.Circle, Title = "Class 0", MarkerSize = 2, MarkerFill = OxyColor.FromArgb(200, 252, 212, 125) };
+            var class1 = new ScatterSeries { MarkerType = MarkerType.Circle, Title = "Class 1", MarkerSize = 2, MarkerFill = OxyColor.FromArgb(255, 200, 68, 81) };
 
             // Separate the data points by class
             for (int i = 0; i < data.Count; i++)
@@ -177,7 +189,8 @@ namespace NeuralNetworkVisualizer
                 Position = AxisPosition.Right,
                 Palette = CreateTransparentPalette(500, 128), // Change the second parameter to set the desired alpha value
                 Title = "Probability",
-                Key = "ColorAxisKey"
+                Key = "ColorAxisKey",
+                IsAxisVisible = false
             };
 
             // Add heatmap
@@ -198,15 +211,15 @@ namespace NeuralNetworkVisualizer
             plotModel.Series.Add(class0);
             plotModel.Series.Add(class1);
 
-            plotModel.Axes.Add(new LinearColorAxis { Position = AxisPosition.Right, Palette = OxyPalettes.Jet(200) });
+            plotModel.Axes.Add(new LinearColorAxis { Position = AxisPosition.Right, IsAxisVisible = false });
             plotModel.Axes.Add(colorAxis);
 
             // Add a legend
             plotModel.IsLegendVisible = true;
 
             // Set plot boundaries
-            var xAxis = new LinearAxis() { Position = AxisPosition.Bottom };
-            var yAxis = new LinearAxis() { Position = AxisPosition.Left };
+            var xAxis = new LinearAxis() { Position = AxisPosition.Bottom, Title = "X1" };
+            var yAxis = new LinearAxis() { Position = AxisPosition.Left, Title = "X2" };
 
             yAxis.AbsoluteMinimum = -10;
             yAxis.AbsoluteMaximum = 10;
@@ -227,8 +240,6 @@ namespace NeuralNetworkVisualizer
 
             return plotModel;
         }
-
-
 
         public double Predict(double[] input)
         {
