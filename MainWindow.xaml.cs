@@ -52,29 +52,31 @@ namespace NeuralNetworkVisualizer
             double circleSize = Math.Min(Height, Width) / (largestLayer * 3);
 
             var layers = new List<object>();
-            // Boolean used so X1 and X2 can be added as content to the input layer
-            bool first = true;
+
             // Adds layers to be used as the ItemsSource for the CirclesContainer
             // to display each layer vertically column by column in the UI
-            foreach (var neuronCount in neuronCounts)
+            for (int neuronCount = 0; neuronCount < neuronCounts.Length; neuronCount++)
             {
                 var layer = new List<object>();
                 // Add labels X1 and X2 to the input layer
-                if (first == true)
+                if (neuronCount == 0)
                 {
                     layer.Add(new { CircleSize = circleSize, Content = "X1" });
                     layer.Add(new { CircleSize = circleSize, Content = "X2" });
-                    first = false;
+                }
+                else if (neuronCount == neuronCounts.Length - 1)
+                {
+                    layer.Add(new { CircleSize = circleSize, Content = "O" });
                 }
                 else
                 {
-                    for (int i = 0; i < neuronCount; i++)
+                    for (int i = 0; i < neuronCounts[neuronCount]; i++)
                     {
                         layer.Add(new { CircleSize = circleSize });
                     }
                 }
 
-                layers.Add(new { RowCount = neuronCount, ColumnCount = 1, Neurons = layer });
+                layers.Add(new { RowCount = neuronCounts[neuronCount], ColumnCount = 1, Neurons = layer });
             }
 
             CirclesContainer.ItemsSource = layers;
