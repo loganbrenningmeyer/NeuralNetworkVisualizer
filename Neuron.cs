@@ -45,12 +45,39 @@ namespace NeuralNetworkVisualizer
 
         public double ActivationFunction()
         {
-            return this.Sigmoid();
+            if (this.activation == "sigmoid")
+            {
+                return this.Sigmoid();
+            }
+            else
+            {
+                return this.ReLU();
+            }
+            
         }
 
         public double ActivationDerivative()
         {
-            return this.SigmoidDerivative();
+            if (this.activation == "sigmoid")
+            {
+                return this.SigmoidDerivative();
+            }
+            else
+            {
+                return this.ReLUDerivative();
+            }
+        }
+
+        public double ReLU()
+        {
+            double alpha = 0.01;
+            return this.Z > 0 ? this.Z : alpha * this.Z;
+        }
+
+        public double ReLUDerivative()
+        {
+            double alpha = 0.01;
+            return this.Z > 0 ? 1 : alpha;
         }
 
         public double Sigmoid()

@@ -146,26 +146,47 @@ namespace NeuralNetworkVisualizer
             accuracyPlotView.Model = new PlotModel();
             accuracyPlotView.InvalidatePlot(true);
 
-            Random random = new Random();
-
-            int numLayers = random.Next(4, 8);
-
+            // Read hidden layers input into array
+            string[] splitText = HiddenLayers_TextBox.Text.Split(new string[] {", ", "," }, StringSplitOptions.RemoveEmptyEntries);
+            int numLayers = splitText.Length + 2;
+            // Initialize numNeurons to # of hidden layers + 2 for input/output layers
             numNeurons = new int[numLayers];
-            numNeurons[0] = 2;
 
             for (int i = 1; i < numLayers-1; i++)
             {
-                numNeurons[i] = random.Next(2, 7);
+                try
+                {
+                    numNeurons[i] = int.Parse(splitText[i - 1]);
+                }
+                catch 
+                {
+                    MessageBox.Show("Hidden layers were formatted incorrectly.\nAn example of proper formatting: 5, 3, 2", "Hidden Layers Input Error");
+                    return;
+                }
             }
 
+            // Set input/output layers
+            numNeurons[0] = 2;
             numNeurons[numLayers-1] = 1;
 
-            string activation = "sigmoid";
+            string activation;
+
+            if (SigmoidRadioButton.IsChecked == true)
+            {
+                activation = "sigmoid";
+            }
+            else
+            {
+                activation = "relu";
+            }
+
             nn = new NeuralNetwork(numNeurons, activation);
             CreateNeurons(numNeurons);
             CreateWeightLines();
             // Subscribe to plot update event
             nn.PlotUpdated += (sender, e) => Nn_PlotUpdated(sender, e, nn);
+
+            Random random = new Random();
 
             int data = random.Next(0, 4);
 
