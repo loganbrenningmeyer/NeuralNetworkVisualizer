@@ -114,7 +114,7 @@
             <Label Grid.Row="1" Content="Hidden Layers" Foreground="#4f8d8a" FontWeight="Bold" FontSize="18" FontFamily="Tahoma"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
 
             <Border x:Name="RoundedBorder" Margin ="0,0,0,10" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="#181715" BorderBrush="#4f8d8a" BorderThickness="2" CornerRadius="10" Padding="5">
-                <TextBox x:Name="HiddenLayers_TextBox" Background="Transparent" Foreground="#4f8d8a" FontFamily="Segoe UI" FontWeight="Bold" BorderThickness="0" VerticalAlignment="Center" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="18" Text="3, 2" />
+                <TextBox x:Name="HiddenLayers_TextBox" CaretBrush="#4f8d8a" Background="Transparent" Foreground="#4f8d8a" FontFamily="Segoe UI" FontWeight="Bold" BorderThickness="0" VerticalAlignment="Center" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="18" Text="3, 2" />
             </Border>
 
             <StackPanel Margin="0,0,40,0" HorizontalAlignment="Right" VerticalAlignment="Center">

@@ -109,7 +109,8 @@ namespace NeuralNetworkVisualizer
 
             plotModel.Legends.Add(new Legend()
             {
-                LegendPosition = LegendPosition.RightBottom
+                LegendPosition = LegendPosition.RightBottom,
+                LegendTextColor = OxyColor.FromArgb(255, 251, 212, 125)
             });
 
             plotModel.IsLegendVisible = true;
@@ -118,6 +119,7 @@ namespace NeuralNetworkVisualizer
             var yAxis = new OxyPlot.Axes.LinearAxis
             {
                 Position = OxyPlot.Axes.AxisPosition.Left,
+                IsZoomEnabled = false,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 MajorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
@@ -125,21 +127,29 @@ namespace NeuralNetworkVisualizer
                 MajorGridlineThickness = 1,
                 MinorGridlineThickness = 1,
                 Minimum = 0,
-                Maximum = 1
-                
+                Maximum = 1,
+                TicklineColor = OxyColor.FromArgb(255, 251, 212, 125),
+                TextColor = OxyColor.FromArgb(255, 251, 212, 125),
+                TitleColor = OxyColor.FromArgb(255, 251, 212, 125)
+
             };
             plotModel.Axes.Add(yAxis);
 
             // Add x-axis
             var xAxis = new OxyPlot.Axes.LinearAxis
             {
+                Title = "Epoch",
                 Position = OxyPlot.Axes.AxisPosition.Bottom,
+                IsZoomEnabled = false,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 MajorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
                 MinorGridlineColor = OxyColor.FromArgb(255, 54, 57, 62),
                 MajorGridlineThickness = 1,
-                MinorGridlineThickness = 1
+                MinorGridlineThickness = 1,
+                TicklineColor = OxyColor.FromArgb(255, 251, 212, 125),
+                TextColor = OxyColor.FromArgb(255, 251, 212, 125),
+                TitleColor = OxyColor.FromArgb(255, 251, 212, 125)
             };
             plotModel.Axes.Add(xAxis);
 
@@ -218,8 +228,21 @@ namespace NeuralNetworkVisualizer
             plotModel.IsLegendVisible = true;
 
             // Set plot boundaries
-            var xAxis = new LinearAxis() { Position = AxisPosition.Bottom, Title = "X1" };
-            var yAxis = new LinearAxis() { Position = AxisPosition.Left, Title = "X2" };
+            var xAxis = new LinearAxis() 
+            { 
+              Position = AxisPosition.Bottom, 
+              Title = "X1", 
+              TicklineColor = OxyColor.FromArgb(255, 251, 212, 125), 
+              TextColor = OxyColor.FromArgb(255, 251, 212, 125),
+              TitleColor = OxyColor.FromArgb(255, 251, 212, 125)
+            };
+            var yAxis = new LinearAxis() 
+            { 
+              Position = AxisPosition.Left, Title = "X2", 
+              TicklineColor = OxyColor.FromArgb(255, 251, 212, 125), 
+              TextColor = OxyColor.FromArgb(255, 251, 212, 125),
+              TitleColor = OxyColor.FromArgb(255, 251, 212, 125)
+            };
 
             yAxis.AbsoluteMinimum = -10;
             yAxis.AbsoluteMaximum = 10;
