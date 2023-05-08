@@ -22,18 +22,21 @@ namespace NeuralNetworkVisualizer
             this.nn = nn;
         }
 
-        private OxyPalette CreateTransparentPalette(int steps, byte alpha)
+        // Creates the OxyPalette for the decision boundary heatmap
+        private OxyPalette CreateTransparentPalette()
         {
             var numberOfColors = 256; // Number of colors in the palette
 
             // Define the start and end colors of the palette
-            var startColor = OxyColor.FromArgb(150, 241, 161, 97); // Yellowish-orange color
-            var endColor = OxyColor.FromArgb(150, 178, 72, 74); // Reddish-pink color
+            var startColor = OxyColor.FromArgb(150, 241, 161, 97); // Yellow
+            var endColor = OxyColor.FromArgb(150, 178, 72, 74); // Red
 
             var customPalette = OxyPalette.Interpolate(numberOfColors, startColor, endColor);
             return customPalette;
         }
 
+        // Creates the coplot of accuracy and loss
+        // Uses AccuracyHistory/LossHistory lists from NeuralNetwork for data
         public OxyPlot.PlotModel LossAccuracyPlotData()
         {
             var plotModel = new OxyPlot.PlotModel { PlotAreaBackground = OxyColor.FromArgb(255, 51, 52, 57) };
@@ -117,6 +120,9 @@ namespace NeuralNetworkVisualizer
             return plotModel;
         }
 
+        // Creates the decision boundary heatmap plot
+        // Plots the data points and generates a grid of points used 
+        // to classify the data and create the heatmap
         public PlotModel PlotData()
         {
             var plotModel = new PlotModel { PlotAreaBackground = OxyColor.FromArgb(255, 51, 52, 57) };
@@ -158,7 +164,7 @@ namespace NeuralNetworkVisualizer
             var colorAxis = new LinearColorAxis
             {
                 Position = AxisPosition.Right,
-                Palette = CreateTransparentPalette(500, 128), // Change the second parameter to set the desired alpha value
+                Palette = CreateTransparentPalette(), // Change the second parameter to set the desired alpha value
                 Title = "Probability",
                 Key = "ColorAxisKey",
                 IsAxisVisible = false
@@ -226,6 +232,7 @@ namespace NeuralNetworkVisualizer
             return plotModel;
         }
 
+        // Passes input through the network to get its output prediction
         public double Predict(double[] input)
         {
             // Set input values
@@ -241,6 +248,8 @@ namespace NeuralNetworkVisualizer
             return nn.Layers[nn.Layers.Count - 1].Neurons[0].Output;
         }
 
+        // Creates an array in the range [start, end] with numElements elements
+        // Used for grid creation in PlotData()
         public double[] CreateVector(double start, double end, int numElements)
         {
             if (numElements <= 1)

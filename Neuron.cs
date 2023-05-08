@@ -31,6 +31,8 @@ namespace NeuralNetworkVisualizer
             this.biasDerivative = 0.0;
         }
 
+        // Calculates weighed sum (Z) of inputs, weights, and bias
+        // Z = w1 * x1 + w2 * x2 + ... + wN * xN + b
         public void CalculateWeightedSum()
         {
             this.Z = 0.0;
@@ -43,6 +45,8 @@ namespace NeuralNetworkVisualizer
             this.Z += this.bias;
         }
 
+        // Uses the proper activation function given the 
+        // neuron's activation function type
         public double ActivationFunction()
         {
             if (this.activation == "sigmoid")
@@ -56,6 +60,8 @@ namespace NeuralNetworkVisualizer
             
         }
 
+        // Returns the derivative of the proper activation function given the
+        // neuron's activation function type
         public double ActivationDerivative()
         {
             if (this.activation == "sigmoid")
@@ -68,18 +74,21 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        // ReLU activation: Z if Z > 0, alpha*Z if Z <= 0
         public double ReLU()
         {
             double alpha = 0.01;
             return this.Z > 0 ? this.Z : alpha * this.Z;
         }
 
+        // ReLU derivative: 1 if Z > 0, alpha if Z <= 0
         public double ReLUDerivative()
         {
             double alpha = 0.01;
             return this.Z > 0 ? 1 : alpha;
         }
 
+        // Sigmoid activation: 1 / (1 + e^-Z)
         public double Sigmoid()
         {
             if (this.Z >= 0)
@@ -93,7 +102,7 @@ namespace NeuralNetworkVisualizer
             }
         }
 
-
+        // Sigmoid derivative: Sigmoid() * (1 - Sigmoid())
         public double SigmoidDerivative()
         {
             return this.Sigmoid() * (1 - this.Sigmoid());

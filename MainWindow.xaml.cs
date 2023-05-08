@@ -21,33 +21,45 @@ namespace NeuralNetworkVisualizer
     /// </summary>
     public partial class MainWindow : Window
     {
+        // nn: NeuralNetwork used to train/test/predict
         private NeuralNetwork nn;
+        // nnPlot: NNPlot used to plot the loss/accuracy and the decision boundary
         private NNPlot nnPlot;
+        // nnDataLoader: NNDataLoader used to load the data into nn
         private NNDataLoader nnDataLoader;
+        // numNeurons: int[] used to store the number of neurons in each layer for initialization of nn
         private int[] numNeurons;
         public MainWindow()
         {
-
             InitializeComponent();
+            // Default neural network with 2 hidden layers with 3 neurons/2 neurons & the sigmoid activation function
             numNeurons = new int[] { 2, 3, 2, 1 };
             nn = new NeuralNetwork(numNeurons, "sigmoid");
-
+            // Display the configuration of the neural network
             CreateNeurons(numNeurons);
             CreateWeightLines();
         }
+
+        /*
+         * Creates the circles used to represent the neurons in the neural network
+         * visualization.
+         */
         private void CreateNeurons(int[] neuronCounts)
         {
+            // Scales the size of the circles based on the number of neurons in the largest layer
+            // this way regardless of the size of the network, the visualization will scale properly
             int largestLayer = neuronCounts.Max();
             double circleSize = Math.Min(Height, Width) / (largestLayer * 3);
 
             var layers = new List<object>();
-
+            // Boolean used so X1 and X2 can be added as content to the input layer
             bool first = true;
-
+            // Adds layers to be used as the ItemsSource for the CirclesContainer
+            // to display each layer vertically column by column in the UI
             foreach (var neuronCount in neuronCounts)
             {
                 var layer = new List<object>();
-
+                // Add labels X1 and X2 to the input layer
                 if (first == true)
                 {
                     layer.Add(new { CircleSize = circleSize, Content = "X1" });
@@ -68,8 +80,12 @@ namespace NeuralNetworkVisualizer
             CirclesContainer.ItemsSource = layers;
         }
 
+        /*
+         * Creates the lines used to represent the weights in the neural network visualization.
+         */
         private void CreateWeightLines()
         {
+            // Set color for the brush
             var converter = new BrushConverter();
             var brush = (Brush)converter.ConvertFromString("#66c7bc");
             // Clear the canvas and create the lines for the weights
@@ -98,17 +114,20 @@ namespace NeuralNetworkVisualizer
                 }
             }
         }
-
+        
+        // Event handler to redraw weight lines when the window is resized
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             CreateWeightLines();
         }
 
+        // Event handler to draw weight lines when the window is loaded
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             CreateWeightLines();
         }
 
+        // Updates accuracy/loss and decision boundary plots when the function is called
         private void Nn_PlotUpdated(object? sender, EventArgs e, NeuralNetwork nn)
         {
             // Update the plot view
@@ -122,6 +141,8 @@ namespace NeuralNetworkVisualizer
             });
         }
 
+        // Trains the neural network asynchronously so it can be interrupted
+        // and restarted when the play button is clicked
         private async Task TrainAsync()
         {
             await Task.Run(() => nn.Train());
@@ -133,7 +154,11 @@ namespace NeuralNetworkVisualizer
             });
         }
 
-
+        /*
+         * Event handler for the play button. 
+         * First initializes the neural network based on user input
+         * Then randomly loads data into the network and begins training asynchronously
+         */
         private async void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             // Stop the previous training, if any
@@ -142,6 +167,7 @@ namespace NeuralNetworkVisualizer
                 nn.StopTraining = true;
             }
 
+            // Initialize the plots
             plotView.Model = new PlotModel();
             plotView.InvalidatePlot(true);
 
@@ -171,8 +197,8 @@ namespace NeuralNetworkVisualizer
             numNeurons[0] = 2;
             numNeurons[numLayers-1] = 1;
 
+            // Set activation function based on radio button selection
             string activation;
-
             if (SigmoidRadioButton.IsChecked == true)
             {
                 activation = "sigmoid";
@@ -182,18 +208,20 @@ namespace NeuralNetworkVisualizer
                 activation = "relu";
             }
 
-            // Setup new neural network, data loader, and plotter
+            // Initialize new neural network, data loader, and plotter
             nn = new NeuralNetwork(numNeurons, activation);
             nnPlot = new NNPlot(nn);
             nnDataLoader = new NNDataLoader(nn);
+
             // Display neural network configuration in the UI
             CreateNeurons(numNeurons);
             CreateWeightLines();
+
             // Subscribe to plot update event
             nn.PlotUpdated += (sender, e) => Nn_PlotUpdated(sender, e, nn);
 
+            // Randomly load data into the network
             Random random = new Random();
-
             int data = random.Next(0, 4);
 
             if (data == 0) 
@@ -213,8 +241,8 @@ namespace NeuralNetworkVisualizer
                 nnDataLoader.LoadSpiralData();
             }
             
+            // Allow the network to be trained
             nn.StopTraining = false;
-
             await TrainAsync();
         }
     }

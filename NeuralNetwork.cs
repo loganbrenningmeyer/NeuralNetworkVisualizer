@@ -39,8 +39,8 @@ namespace NeuralNetworkVisualizer
             {
                 this.layers.Add(new Layer(numNeurons[i], activation));
             }
-            // Output layer
-            this.layers.Add(new Layer(numNeurons[numNeurons.Length - 1], activation));
+            // Output layer (sigmoid for binary classification)
+            this.layers.Add(new Layer(numNeurons[numNeurons.Length - 1], "sigmoid"));
 
             this.InitializeWeightsInputs();
         }
@@ -66,6 +66,7 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        // Passes the input data through the network
         public void Forward()
         {
             // send inputs into the first layer
@@ -89,6 +90,7 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        // Calculates weight/bias derivatives for each neuron in the network to prepare for updating
         public void Backprop(double error)
         {
             // Iterate through each layer backwards excluding the input layer
@@ -130,6 +132,7 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        // Using the derivatives calculated in Backprop(), update the weights and biases of each neuron
         public void UpdateWeights()
         {
             // Learning rate
@@ -160,6 +163,8 @@ namespace NeuralNetworkVisualizer
             }
         }
         
+        // Trains the network by passing the data through the network, calculating the error, and updating the weights
+        // for a specified number of epochs
         public void Train()
         {
             int epochs = 0;
@@ -210,6 +215,7 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        // Tests the network by passing the data through the network and calculating the accuracy
         public double Test()
         {
             int correct = 0;

@@ -9,6 +9,8 @@ namespace NeuralNetworkVisualizer
     class Layer
     {
         private List<Neuron> neurons { get; set; }
+        // Creates a list of the specified number of neurons with the 
+        // specified activation function
         public Layer(int num_neurons, string activation) 
         { 
             this.neurons = new List<Neuron>();

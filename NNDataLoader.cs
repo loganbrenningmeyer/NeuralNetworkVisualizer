@@ -17,8 +17,9 @@ namespace NeuralNetworkVisualizer
         {
             this.nn = nn;
         }
+   
         /*
-         * Data Generation
+         * Loads data for two horizontal crescent moons interlocking
          */
         public void LoadMoonData(int numSamples = 1000, double noise = 0.1)
         {
@@ -62,6 +63,9 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        /*
+         * Loads data for two spirals interlocking
+         */
         public void LoadSpiralData(int numSamples = 1000, double noise = 0.1)
         {
             nn.Data.Clear();
@@ -85,7 +89,9 @@ namespace NeuralNetworkVisualizer
             }
         }
 
-
+        /*
+         * Loads data for a circle and an outer ring
+         */
         public void LoadCircleData(int numSamples = 1000)
         {
             double radiusInner = 4;
@@ -122,6 +128,9 @@ namespace NeuralNetworkVisualizer
             }
         }
 
+        /*
+         * Loads XOR data (two clusters of data that form an XOR shape)
+         */
         public void LoadXORData(int numSamples = 1000)
         {
 

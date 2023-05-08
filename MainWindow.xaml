@@ -20,9 +20,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type RadioButton}">
                         <Grid>
-                            <Ellipse x:Name="RadioCircle" Margin="0,0,50,5" Width="16" Height="16" Stroke="#4f8d8a" StrokeThickness="2" Fill="Transparent"/>
-                            <Ellipse x:Name="RadioInnerCircle" Margin="0,0,50,5" Width="8" Height="8" Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <ContentPresenter x:Name="Content" Margin="0,0,15,0" HorizontalAlignment="Right" Content="{TemplateBinding Content}"/>
+                            <Ellipse x:Name="RadioCircle" Margin="20,0,0,10" Width="16" Height="16" Stroke="#4f8d8a" StrokeThickness="2" Fill="Transparent"/>
+                            <Ellipse x:Name="RadioInnerCircle" Margin="20,0,0,10" Width="8" Height="8" Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter x:Name="Content" Margin="0,0,85,0" HorizontalAlignment="Left" Content="{TemplateBinding Content}"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -111,25 +111,40 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="1" Content="Hidden Layers" Foreground="#4f8d8a" FontWeight="Bold" FontSize="18" FontFamily="Tahoma"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+            <Border Grid.Row="2" BorderBrush="#4f8d8a" BorderThickness="1" CornerRadius="20" Padding="10" Margin="20,0,20,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-            <Border x:Name="RoundedBorder" Margin ="0,0,0,10" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="#181715" BorderBrush="#4f8d8a" BorderThickness="2" CornerRadius="10" Padding="5">
-                <TextBox x:Name="HiddenLayers_TextBox" CaretBrush="#4f8d8a" Background="Transparent" Foreground="#4f8d8a" FontFamily="Segoe UI" FontWeight="Bold" BorderThickness="0" VerticalAlignment="Center" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="18" Text="3, 2" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0"  Grid.Column="0" Content="Hidden Layers" Foreground="#4f8d8a" FontWeight="Bold" FontSize="18" FontFamily="Tahoma"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+
+                    <Border x:Name="RoundedBorder" Margin ="0,0,0,10" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="#181715" BorderBrush="#4f8d8a" BorderThickness="2" CornerRadius="10" Padding="5">
+                        <TextBox x:Name="HiddenLayers_TextBox" CaretBrush="#4f8d8a" Background="Transparent" Foreground="#4f8d8a" FontFamily="Segoe UI" FontWeight="Bold" BorderThickness="0" VerticalAlignment="Center" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="18" Text="3, 2" />
+                    </Border>
+
+                    <Label Grid.Row="0"  Grid.Column="1" Content="Activation" Foreground="#4f8d8a" FontWeight="Bold" FontSize="18" FontFamily="Tahoma"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+
+                    <StackPanel Grid.Column="1" Grid.Row="1" Margin="0,0,-20,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <RadioButton x:Name="SigmoidRadioButton" GroupName="ActivationFunction" Content="Sigmoid" IsChecked="True" Style="{StaticResource CustomRadioButtonStyle}"/>
+                        <RadioButton x:Name="ReLURadioButton" GroupName="ActivationFunction" Content="ReLU" Style="{StaticResource CustomRadioButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
             </Border>
 
-            <StackPanel Margin="0,0,40,0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <TextBlock FontWeight="Bold" Margin="0,0,0,10" FontSize="14" Foreground="#4f8d8a">Activation Function</TextBlock>
-                <RadioButton x:Name="SigmoidRadioButton" GroupName="ActivationFunction" Content="Sigmoid" IsChecked="True" Style="{StaticResource CustomRadioButtonStyle}"/>
-                <RadioButton x:Name="ReLURadioButton" GroupName="ActivationFunction" Content="ReLU" Style="{StaticResource CustomRadioButtonStyle}"/>
-            </StackPanel>
-
-            <Button x:Name="PlayButton" Margin="50,15,0,0" Grid.Row="0" Click="PlayButton_Click" Width="100" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="0">
+            <Button x:Name="PlayButton" Margin="0,0,0,0" Grid.Row="0" Click="PlayButton_Click" Width="75" Height="75" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid>
                             <Ellipse x:Name="Circle" Fill="#181715"  Stroke="#f9d47c" StrokeThickness="5"/>
                             <Path x:Name="PlaySymbol" Fill="#f9d47c"  HorizontalAlignment="Left"
-                                  Data="M 1 1 L 3 2 L 1 3 Z" Stretch="Fill" Width="29" Margin="41,28,0,28"/>
+                                  Data="M 1 1 L 3 2 L 1 3 Z" Stretch="Fill" Width="29" Margin="27,20,10,20"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -142,7 +157,6 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-        </Grid>
-        
+        </Grid> 
     </Grid>
 </Window>
