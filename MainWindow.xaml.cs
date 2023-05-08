@@ -22,6 +22,8 @@ namespace NeuralNetworkVisualizer
     public partial class MainWindow : Window
     {
         private NeuralNetwork nn;
+        private NNPlot nnPlot;
+        private NNDataLoader nnDataLoader;
         private int[] numNeurons;
         public MainWindow()
         {
@@ -112,10 +114,10 @@ namespace NeuralNetworkVisualizer
             // Update the plot view
             Dispatcher.Invoke(() =>
             {
-                plotView.Model = nn.PlotData();
+                plotView.Model = nnPlot.PlotData();
                 plotView.InvalidatePlot(true);
 
-                accuracyPlotView.Model = nn.LossAccuracyPlotData();
+                accuracyPlotView.Model = nnPlot.LossAccuracyPlotData();
                 accuracyPlotView.InvalidatePlot(true);
             });
         }
@@ -127,7 +129,7 @@ namespace NeuralNetworkVisualizer
             // Update the UI on the main thread after training has finished
             Dispatcher.Invoke(() =>
             {
-                plotView.Model = nn.PlotData();
+                plotView.Model = nnPlot.PlotData();
             });
         }
 
@@ -180,7 +182,11 @@ namespace NeuralNetworkVisualizer
                 activation = "relu";
             }
 
+            // Setup new neural network, data loader, and plotter
             nn = new NeuralNetwork(numNeurons, activation);
+            nnPlot = new NNPlot(nn);
+            nnDataLoader = new NNDataLoader(nn);
+            // Display neural network configuration in the UI
             CreateNeurons(numNeurons);
             CreateWeightLines();
             // Subscribe to plot update event
@@ -192,22 +198,21 @@ namespace NeuralNetworkVisualizer
 
             if (data == 0) 
             {
-                nn.LoadMoonData(noise: 0.4);
+                nnDataLoader.LoadMoonData(noise: 0.4);
             }
             else if (data == 1)
             {
-                nn.LoadXORData();
+                nnDataLoader.LoadXORData();
             }
             else if (data == 2)
             {
-                nn.LoadCircleData();
+                nnDataLoader.LoadCircleData();
             }
             else
             {
-                nn.LoadSpiralData();
+                nnDataLoader.LoadSpiralData();
             }
             
-
             nn.StopTraining = false;
 
             await TrainAsync();
