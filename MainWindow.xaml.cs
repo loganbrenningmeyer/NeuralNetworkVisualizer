@@ -200,14 +200,18 @@ namespace NeuralNetworkVisualizer
             numNeurons[numLayers-1] = 1;
 
             // Set activation function based on radio button selection
-            string activation;
+            string activation = "sigmoid";
             if (SigmoidRadioButton.IsChecked == true)
             {
                 activation = "sigmoid";
             }
-            else
+            else if (ReLURadioButton.IsChecked == true)
             {
                 activation = "relu";
+            }
+            else if (TanhRadioButton.IsChecked == true)
+            {
+                activation = "tanh";
             }
 
             // Initialize new neural network, data loader, and plotter

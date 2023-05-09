@@ -53,9 +53,13 @@ namespace NeuralNetworkVisualizer
             {
                 return this.Sigmoid();
             }
-            else
+            else if (this.activation == "relu")
             {
                 return this.ReLU();
+            }
+            else
+            {
+                return this.Tanh();
             }
             
         }
@@ -68,11 +72,29 @@ namespace NeuralNetworkVisualizer
             {
                 return this.SigmoidDerivative();
             }
-            else
+            else if (this.activation == "relu")
             {
                 return this.ReLUDerivative();
             }
+            else
+            {
+                return this.TanhDerivative();
+            }
         }
+
+        // Tanh activation: (e^Z - e^-Z) / (e^Z + e^-Z)
+        public double Tanh()
+        {
+            return Math.Tanh(this.Z);
+        }
+
+        // Tanh derivative: 1 - Tanh()^2
+        public double TanhDerivative()
+        {
+            double tanhZ = this.Tanh();
+            return 1 - tanhZ * tanhZ;
+        }
+
 
         // ReLU activation: Z if Z > 0, alpha*Z if Z <= 0
         public double ReLU()

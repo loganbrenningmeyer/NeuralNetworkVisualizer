@@ -78,7 +78,7 @@ namespace NeuralNetworkVisualizer
                 for (int spiralClass = 0; spiralClass < 2; spiralClass++)
                 {
                     double r = (double)i / (numSamples / 2) * 2;
-                    double t = 1.75 * r * Math.PI + (2 * Math.PI * spiralClass);
+                    double t = 1.75 * r * Math.PI + (2 * Math.PI * spiralClass) + 0.5 * Math.PI;
                     if (spiralClass == 1) { t += Math.PI; }
                     double x1 = r * Math.Cos(t) + noise * rng.NextDouble() * 2 - 1;
                     double x2 = r * Math.Sin(t) + noise * rng.NextDouble() * 2 - 1;
