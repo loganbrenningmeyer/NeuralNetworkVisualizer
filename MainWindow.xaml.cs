@@ -72,7 +72,7 @@ namespace NeuralNetworkVisualizer
                 {
                     for (int i = 0; i < neuronCounts[neuronCount]; i++)
                     {
-                        layer.Add(new { CircleSize = circleSize });
+                        layer.Add(new { CircleSize = circleSize, Content = "" });
                     }
                 }
 

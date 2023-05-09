@@ -22,7 +22,7 @@
                         <Grid>
                             <Ellipse x:Name="RadioCircle" Margin="20,0,0,10" Width="16" Height="16" Stroke="#4f8d8a" StrokeThickness="2" Fill="Transparent"/>
                             <Ellipse x:Name="RadioInnerCircle" Margin="20,0,0,10" Width="8" Height="8" Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <ContentPresenter x:Name="Content" Margin="0,0,85,0" HorizontalAlignment="Left" Content="{TemplateBinding Content}"/>
+                            <ContentPresenter x:Name="Content" Margin="0,0,85,0" HorizontalAlignment="Left" />
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
