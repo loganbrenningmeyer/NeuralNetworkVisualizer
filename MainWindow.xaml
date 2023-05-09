@@ -142,7 +142,7 @@
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid>
-                            <Ellipse x:Name="Circle" Fill="#181715"  Stroke="#f9d47c" StrokeThickness="5"/>
+                            <Ellipse x:Name="Circle" Fill="#181715"  Stroke="#f9d47c" StrokeThickness="1"/>
                             <Path x:Name="PlaySymbol" Fill="#f9d47c"  HorizontalAlignment="Left"
                                   Data="M 1 1 L 3 2 L 1 3 Z" Stretch="Fill" Width="29" Margin="27,20,10,20"/>
                         </Grid>
